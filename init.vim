@@ -22,6 +22,7 @@ Plug 'tpope/vim-markdown'
 Plug 'vim-scripts/nginx.vim'
 Plug 'tikhomirov/vim-glsl'
 Plug 'nvie/vim-flake8'
+"Plug 'lervag/vimtex'
 
 Plug 'godlygeek/tabular'
 Plug 'Shougo/deoplete.nvim'
@@ -30,7 +31,7 @@ Plug 'vim-scripts/ReplaceWithRegister'
 Plug 'Raimondi/delimitMate'
 Plug 'tmhedberg/SimpylFold'
 Plug 'Konfekt/FastFold'
-" Plug 'SirVer/ultisnips' "Both snippet plugins are needed for them to work
+Plug 'SirVer/ultisnips' "Both snippet plugins are needed for them to work
 Plug 'honza/vim-snippets'
 
 Plug 'michamos/vim-bepo'
@@ -99,6 +100,7 @@ set spell spelllang=fr
 set spell spelllang=en_gb
 set nospell
 map <silent> <F8> :set spell!<CR>
+"inoremap <C-l> <c-g>u<Esc>[s1z=`]a<c-g>u
 
 " BACKUP
 set nobackup                " no backup : everything is on git/svn
@@ -198,6 +200,19 @@ let g:ycm_autoclose_preview_window_after_completion=1
 "FOLDING
 set foldmethod=indent
 set foldlevel=99
+
+"VIMTEX
+let g:tex_flavor='latex'
+let g:vimtex_view_method='zathura'
+let g:vimtex_quickfix_mode=0
+set conceallevel=1
+let g:tex_conceal='abdmg'
+
+"ULTISNIPS
+let g:UltiSnipsSnippetsDir = "~/.config/nvim/snippets"
+let g:UltiSnipsExpandTrigger = '<tab>'
+let g:UltiSnipsJumpForwardTrigger = '<tab>'
+let g:UltiSnipsJumpBackwardTrigger = '<s-tab>'
 
 au BufRead,BufNewFile *.nginx set ft=nginx
 au BufRead,BufNewFile */etc/nginx/* set ft=nginx
