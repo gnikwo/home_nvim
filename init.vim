@@ -23,6 +23,7 @@ Plug 'vim-scripts/nginx.vim'
 Plug 'tikhomirov/vim-glsl'
 Plug 'nvie/vim-flake8'
 "Plug 'lervag/vimtex'
+Plug 'leafgarland/typescript-vim'
 
 Plug 'godlygeek/tabular'
 Plug 'Shougo/deoplete.nvim'
@@ -218,6 +219,27 @@ au BufRead,BufNewFile *.nginx set ft=nginx
 au BufRead,BufNewFile */etc/nginx/* set ft=nginx
 au BufRead,BufNewFile */usr/local/nginx/conf/* set ft=nginx
 au BufRead,BufNewFile nginx.conf set ft=nginx
+
+"SWITCH HEADER <-> SOURCE
+function! SwitchSourceHeader()
+  "update!
+  if (expand ("%:e") == "cpp")
+    find %:t:r.h
+  else
+    find %:t:r.cpp
+  endif
+endfunction
+
+nmap m :call SwitchSourceHeader()<CR>
+
+"SKELETONS
+if has("autocmd")
+  augroup templates
+    autocmd BufNewFile *.cpp 0r ~/.config/nvim/templates/skeleton.cpp
+    autocmd BufNewFile *.h 0r ~/.config/nvim/templates/skeleton.h
+  augroup END
+endif
+
 
 set ttyfast                 " smooth !
 set laststatus=0
