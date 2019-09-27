@@ -24,9 +24,11 @@ Plug 'tikhomirov/vim-glsl'
 Plug 'nvie/vim-flake8'
 "Plug 'lervag/vimtex'
 Plug 'leafgarland/typescript-vim'
+Plug 'burnettk/vim-angular'
+Plug 'pangloss/vim-javascript'
 
 Plug 'godlygeek/tabular'
-Plug 'Shougo/deoplete.nvim'
+Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'tpope/vim-surround'
 Plug 'vim-scripts/ReplaceWithRegister'
 Plug 'Raimondi/delimitMate'
@@ -59,6 +61,12 @@ nnoremap <silent> <space><space> :Files<CR>
 nnoremap <silent> <space>b :Buffers<CR>
 nnoremap <silent> <space>/ :execute 'Ag ' . input('Ag/')<CR>
 
+nnoremap <silent> qq :bd<CR>
+nmap <silent> T <PageDown>
+nmap <silent> S <PageUP>
+nmap <silent> C :wincmd h<CR>
+nmap <silent> R :wincmd l<CR>
+
 " VIM-AIRLINE
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#show_buffers = 0
@@ -83,10 +91,10 @@ set undofile
 set encoding=utf-8
 filetype off                  " required
 
-set formatoptions+=o  
+set formatoptions+=o
 set conceallevel=1
 set termguicolors
-set nojoinspaces 
+set nojoinspaces
 
 if has('clipboard')
   if has('unnamedplus')  " When possible use + register for copy-paste
@@ -220,6 +228,12 @@ au BufRead,BufNewFile */etc/nginx/* set ft=nginx
 au BufRead,BufNewFile */usr/local/nginx/conf/* set ft=nginx
 au BufRead,BufNewFile nginx.conf set ft=nginx
 
+"VIM-ANGULAR
+let g:angular_source_directory = 'src/app'
+
+"DEOPLETE
+let g:deoplete#enable_at_startup = 1
+
 "SWITCH HEADER <-> SOURCE
 function! SwitchSourceHeader()
   "update!
@@ -239,6 +253,15 @@ if has("autocmd")
     autocmd BufNewFile *.h 0r ~/.config/nvim/templates/skeleton.h
   augroup END
 endif
+
+"Reload vimrc when there is changes
+augroup myvimrc
+    au!
+    au BufWritePost ~/.config/nvim/init.vim so $MYVIMRC
+augroup END
+
+"Remove trailling spaces
+autocmd BufWritePre * :%s/\s\+$//e
 
 
 set ttyfast                 " smooth !
