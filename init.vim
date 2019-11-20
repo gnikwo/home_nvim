@@ -6,12 +6,9 @@
 call plug#begin()
 
 Plug 'scrooloose/nerdtree'
-"Plug 'itchyny/lightline.vim'
 Plug 'airblade/vim-gitgutter'
 
 Plug 'airblade/vim-rooter'
-"Plug 'vim-airline/vim-airline'
-"Plug 'vim-airline/vim-airline-themes'
 
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
@@ -23,12 +20,21 @@ Plug 'vim-scripts/nginx.vim'
 Plug 'tikhomirov/vim-glsl'
 Plug 'nvie/vim-flake8'
 "Plug 'lervag/vimtex'
+
+Plug 'maralla/completor.vim'
+
+Plug 'Quramy/tsuquyomi', { 'do': 'npm -g install typescript' }
+Plug 'vim-syntastic/syntastic'
 Plug 'leafgarland/typescript-vim'
+
+Plug 'terryma/vim-smooth-scroll'
+
+Plug 'artur-shaik/vim-javacomplete2'
+
 Plug 'burnettk/vim-angular'
 Plug 'pangloss/vim-javascript'
 
 Plug 'godlygeek/tabular'
-Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'tpope/vim-surround'
 Plug 'vim-scripts/ReplaceWithRegister'
 Plug 'Raimondi/delimitMate'
@@ -49,14 +55,14 @@ let g:UltiSnipsJumpBackwardTrigger="<c-z>"
 let g:flake8_show_in_file="1"
 
 " CurtineIncSw
-nnoremap <silent> m :call CurtineIncSw()<CR>
+" nnoremap <silent> m :call CurtineIncSw()<CR>
 
 " Alternate
 nnoremap <BS> <C-^>
 
 " FZF
 set wildmenu
-let $FZF_DEFAULT_COMMAND = 'find -not -path "*.o" -not -path ".git/*"'
+let $FZF_DEFAULT_COMMAND = 'find -not -path "*.o" -not -path "./.git*" -not -path "./target*" '
 nnoremap <silent> <space><space> :Files<CR>
 nnoremap <silent> <space>b :Buffers<CR>
 nnoremap <silent> <space>/ :execute 'Ag ' . input('Ag/')<CR>
@@ -84,8 +90,15 @@ set history=1000
 set showcmd                 " show incomplete commands
 set nomodeline              " modeline are for pussies
 set guifont=inconsolata\ 11
+set title
+set titlestring=%F
 
 set number
+
+" Auto reload files when gain focus
+set autoread
+set autowrite
+au FocusGained,BufEnter * :silent! !
 
 set undofile
 set encoding=utf-8
@@ -191,8 +204,24 @@ let g:javascript_conceal_return         = "⇚"
 
 let g:jsx_ext_required = 0
 
-let g:syntastic_check_on_open=1
 let g:glsl_file_extensions = '*.glsl,*.vsh,*.fsh,*.vert,*.tesc,*.tese,*.geom,*.frag,*.comp,*.shader'
+
+autocmd FileType java setlocal omnifunc=javacomplete#Complete
+nmap <F5> <Plug>(JavaComplete-Imports-Add)
+nmap <F6> <Plug>(JavaComplete-Imports-AddSmart)
+nmap <F7> <Plug>(JavaComplete-Imports-RemoveUnused)
+
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 0
+let g:syntastic_check_on_wq = 0
+let g:syntastic_quiet_messages = { "type": "warning" }
+
+let g:tsuquyomi_disable_quickfix = 1
+let g:tsuquyomi_completion_detail = 1
+let g:syntastic_typescript_checkers = ['tsuquyomi']
+
+"NERDTREE
 
 noremap <silent> <C-E> :NERDTreeToggle<CR>
 let NERDTreeQuitOnOpen=1
@@ -231,20 +260,20 @@ au BufRead,BufNewFile nginx.conf set ft=nginx
 "VIM-ANGULAR
 let g:angular_source_directory = 'src/app'
 
-"DEOPLETE
-let g:deoplete#enable_at_startup = 1
+" Completor
+let g:completor_auto_trigger = 1
 
 "SWITCH HEADER <-> SOURCE
-function! SwitchSourceHeader()
+"function! SwitchSourceHeader()
   "update!
-  if (expand ("%:e") == "cpp")
-    find %:t:r.h
-  else
-    find %:t:r.cpp
-  endif
-endfunction
+"  if (expand ("%:e") == "cpp")
+"    find %:t:r.h
+"  else
+"    find %:t:r.cpp
+"  endif
+"endfunction
 
-nmap m :call SwitchSourceHeader()<CR>
+"nmap m :call SwitchSourceHeader()<CR>
 
 "SKELETONS
 if has("autocmd")
@@ -254,17 +283,11 @@ if has("autocmd")
   augroup END
 endif
 
-"Reload vimrc when there is changes
-augroup myvimrc
-    au!
-    au BufWritePost ~/.config/nvim/init.vim so $MYVIMRC
-augroup END
-
 "Remove trailling spaces
 autocmd BufWritePre * :%s/\s\+$//e
 
+noremap <silent> S :call smooth_scroll#up(&scroll, 7, 1)<CR>
+noremap <silent> T :call smooth_scroll#down(&scroll, 7, 1)<CR>
 
 set ttyfast                 " smooth !
 set laststatus=0
-
-command Sudo execute "w !sudo tee %"
