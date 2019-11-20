@@ -289,5 +289,7 @@ autocmd BufWritePre * :%s/\s\+$//e
 noremap <silent> S :call smooth_scroll#up(&scroll, 7, 1)<CR>
 noremap <silent> T :call smooth_scroll#down(&scroll, 7, 1)<CR>
 
-set ttyfast                 " smooth !
-set laststatus=0
+" Status line
+set statusline=%t
+
+set laststatus=1
