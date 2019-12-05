@@ -62,7 +62,7 @@ nnoremap <BS> <C-^>
 
 " FZF
 set wildmenu
-let $FZF_DEFAULT_COMMAND = 'find -not -path "*.o" -not -path "./.git*" -not -path "./target*" '
+let $FZF_DEFAULT_COMMAND = 'find -not -path "*.o" -not -path "./.git*" -not -path "./target*" -not -path "*/target*"'
 nnoremap <silent> <space><space> :Files<CR>
 nnoremap <silent> <space>b :Buffers<CR>
 nnoremap <silent> <space>/ :execute 'Ag ' . input('Ag/')<CR>
@@ -98,7 +98,12 @@ set number
 " Auto reload files when gain focus
 set autoread
 set autowrite
-au FocusGained,BufEnter * :silent! !
+au FocusGained,BufEnter * :Silent !
+command! -nargs=+ Silent
+\   execute 'silent <args>'
+\ | redraw!
+
+au FocusGained,BufEnter * :silent!
 
 set undofile
 set encoding=utf-8
@@ -208,7 +213,7 @@ let g:glsl_file_extensions = '*.glsl,*.vsh,*.fsh,*.vert,*.tesc,*.tese,*.geom,*.f
 
 autocmd FileType java setlocal omnifunc=javacomplete#Complete
 nmap <F5> <Plug>(JavaComplete-Imports-Add)
-nmap <F6> <Plug>(JavaComplete-Imports-AddSmart)
+nmap <F6> <Plug>(JavaComplete-Imports-AddMissing)
 nmap <F7> <Plug>(JavaComplete-Imports-RemoveUnused)
 
 let g:syntastic_always_populate_loc_list = 1
