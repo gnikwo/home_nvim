@@ -40,16 +40,6 @@ Plug 'gnikwo/vim-bepo'
 
 call plug#end()
 
-
-let g:UltiSnipsExpandTrigger="<tab>"
-let g:UltiSnipsJumpForwardTrigger="<c-b>"
-let g:UltiSnipsJumpBackwardTrigger="<c-z>"
-
-let g:flake8_show_in_file="1"
-
-" CurtineIncSw
-" nnoremap <silent> m :call CurtineIncSw()<CR>
-
 " Alternate
 nnoremap <BS> <C-^>
 
@@ -117,7 +107,6 @@ endif
 
 " SPELLCHECK
 set spell spelllang=fr
-set spell spelllang=en_gb
 set nospell
 map <silent> <F8> :set spell!<CR>
 "inoremap <C-l> <c-g>u<Esc>[s1z=`]a<c-g>u
@@ -211,17 +200,6 @@ set wrap                    " wrap
 
 set undodir=~/.config/nvim/undodir
 
-
-let g:javascript_plugin_jsdoc           = 1
-let g:javascript_conceal_function       = "ƒ"
-let g:javascript_conceal_null           = "ø"
-let g:javascript_conceal_arrow_function = "⇒"
-let g:javascript_conceal_return         = "⇚"
-
-let g:jsx_ext_required = 0
-
-let g:glsl_file_extensions = '*.glsl,*.vsh,*.fsh,*.vert,*.tesc,*.tese,*.geom,*.frag,*.comp,*.shader'
-
 autocmd FileType java setlocal omnifunc=javacomplete#Complete
 nmap <F5> <Plug>(JavaComplete-Imports-Add)
 nmap <F6> <Plug>(JavaComplete-Imports-AddMissing)
@@ -234,7 +212,6 @@ nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
 
 "NERDTREE
-
 noremap <silent> <C-E> :NERDTreeToggle<CR>
 let NERDTreeQuitOnOpen=1
 let NERDTreeShowHidden=1
@@ -244,8 +221,6 @@ let NERDTreeMapOpenInTabSilent="<C-T>"
 let NERDTreeMapOpenVSplit="<C-s>"
 let NERDTreeMapRefresh="<C-r>"
 let NERDTreeMapRefreshRoot="<C-R>"
-
-let g:ycm_autoclose_preview_window_after_completion=1
 
 "FOLDING
 set foldmethod=indent
@@ -268,32 +243,6 @@ au BufRead,BufNewFile *.nginx set ft=nginx
 au BufRead,BufNewFile */etc/nginx/* set ft=nginx
 au BufRead,BufNewFile */usr/local/nginx/conf/* set ft=nginx
 au BufRead,BufNewFile nginx.conf set ft=nginx
-
-"VIM-ANGULAR
-let g:angular_source_directory = 'src/app'
-
-" Completor
-let g:completor_auto_trigger = 1
-
-"SWITCH HEADER <-> SOURCE
-"function! SwitchSourceHeader()
-  "update!
-"  if (expand ("%:e") == "cpp")
-"    find %:t:r.h
-"  else
-"    find %:t:r.cpp
-"  endif
-"endfunction
-
-"nmap m :call SwitchSourceHeader()<CR>
-
-"SKELETONS
-if has("autocmd")
-  augroup templates
-    autocmd BufNewFile *.cpp 0r ~/.config/nvim/templates/skeleton.cpp
-    autocmd BufNewFile *.h 0r ~/.config/nvim/templates/skeleton.h
-  augroup END
-endif
 
 "Remove trailling spaces
 autocmd BufWritePre * :%s/\s\+$//e
