@@ -20,6 +20,7 @@ Plug 'tpope/vim-markdown'
 Plug 'vim-scripts/nginx.vim'
 Plug 'tikhomirov/vim-glsl'
 Plug 'nvie/vim-flake8'
+Plug 'psf/black', { 'tag': '19.10b0' }
 
 Plug 'artur-shaik/vim-javacomplete2'
 
@@ -31,8 +32,8 @@ Plug 'Konfekt/FastFold'
 
 Plug 'terryma/vim-smooth-scroll'
 
-Plug 'SirVer/ultisnips'
-Plug 'honza/vim-snippets'
+"Plug 'SirVer/ultisnips'
+"Plug 'honza/vim-snippets'
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
@@ -107,7 +108,6 @@ endif
 
 " SPELLCHECK
 set spell spelllang=fr
-set nospell
 map <silent> <F8> :set spell!<CR>
 "inoremap <C-l> <c-g>u<Esc>[s1z=`]a<c-g>u
 
@@ -149,6 +149,8 @@ set expandtab             " tabs are spaces
 set tabstop=4             " how many spaces on tab
 set softtabstop=4         " one tab = 4 spaces
 set shiftwidth=4          " reduntant with above
+set list
+set listchars=tab:>-,trail:~,extends:>,precedes:<
 
 " ======================== Coc Config ========================
 set hidden
