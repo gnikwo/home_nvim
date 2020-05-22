@@ -247,7 +247,9 @@ au BufRead,BufNewFile */usr/local/nginx/conf/* set ft=nginx
 au BufRead,BufNewFile nginx.conf set ft=nginx
 
 "Remove trailling spaces
-autocmd BufWritePre * :%s/\s\+$//e
+function! Clean()
+    execute(":%s/\s\+$//e")
+endfunc
 
 noremap <silent> S :call smooth_scroll#up(&scroll, 7, 1)<CR>
 noremap <silent> T :call smooth_scroll#down(&scroll, 7, 1)<CR>
