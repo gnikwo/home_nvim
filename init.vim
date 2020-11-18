@@ -17,13 +17,10 @@ Plug 'junegunn/fzf.vim'
 Plug 'ericcurtin/CurtineIncSw.vim'
 
 Plug 'tpope/vim-markdown'
-Plug 'vim-scripts/nginx.vim'
-Plug 'tikhomirov/vim-glsl'
 Plug 'nvie/vim-flake8'
 Plug 'psf/black', { 'tag': '19.10b0' }
 
-Plug 'artur-shaik/vim-javacomplete2'
-
+Plug 'tpope/vim-repeat'
 Plug 'godlygeek/tabular'
 Plug 'tpope/vim-surround'
 Plug 'Raimondi/delimitMate'
@@ -32,8 +29,8 @@ Plug 'Konfekt/FastFold'
 
 Plug 'terryma/vim-smooth-scroll'
 
-"Plug 'SirVer/ultisnips'
-"Plug 'honza/vim-snippets'
+Plug 'SirVer/ultisnips'
+Plug 'honza/vim-snippets'
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
@@ -41,43 +38,99 @@ Plug 'gnikwo/vim-bepo'
 
 call plug#end()
 
-" Alternate
-nnoremap <BS> <C-^>
-
-" FZF
-set wildmenu
-let $FZF_DEFAULT_COMMAND = 'find -not -path "*.o" -not -path "./.git*" -not -path "./target*" -not -path "*/node_modules*" -not -path "*/target*"'
-nnoremap <silent> <space><space> :Files<CR>
-nnoremap <silent> <space>b :Buffers<CR>
-nnoremap <silent> <space>/ :execute 'Ag ' . input('Ag/')<CR>
-
-nnoremap <silent> qq :bd<CR>
-nmap <silent> T <PageDown>
-nmap <silent> S <PageUP>
-nmap <silent> C :wincmd h<CR>
-nmap <silent> R :wincmd l<CR>
-
-" VIM-AIRLINE
-let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#tabline#show_buffers = 0
-let g:airline#extensions#tabline#fnamemod = ':t'
-let g:airline_theme = "hybrid"
-
-nmap gq :bp <BAR> bd #<CR>
-
-inoremap « <
-inoremap » >
-
-" GENERAL
+" ==================== GENERAL ====================
 set nocompatible              " be iMproved, required
-set history=1000
 set showcmd                 " show incomplete commands
 set nomodeline              " modeline are for pussies
 set guifont=inconsolata\ 11
 set title
 set titlestring=%F
-
 set number
+
+" Theme
+colorscheme solarized
+hi! Normal ctermbg=NONE guibg=NONE
+hi clear LineNR
+filetype plugin indent on   " automatic recognition of filetype
+
+" Undo
+set history=1000
+set undodir=~/.config/nvim/undodir
+set undofile
+
+" Status line
+set statusline=%{get(g:,'coc_git_status','')}
+set statusline+=\ \ \|\ \ %t
+set laststatus=2
+
+" Spellcheck
+set spell spelllang=fr
+map <silent> <F8> :set spell!<CR>
+
+" Backup
+set nobackup                " no backup : everything is on git/svn
+set nowb
+set noswapfile              " I said everything was on git !
+
+" Encoding
+set encoding=utf-8
+set fileencoding=utf-8
+
+" Search and/or Replace
+set ignorecase              " caseless search
+set smartcase               " except when using capitals
+set showmatch               " show matching brackets
+set incsearch               " instant search
+set hlsearch                " highlight the search
+set wrapscan                " wrap search
+set gdefault                " assume /g flag on :s/
+nnoremap <silent> <F3> :noh<CR>
+
+" Indentation
+set autoindent            " Auto-ident
+set smartindent           " Smart ident
+set smarttab              " Reset autoindent after a blank line
+set expandtab             " tabs are spaces
+set tabstop=4             " how many spaces on tab
+set softtabstop=4         " one tab = 4 spaces
+set shiftwidth=4          " reduntant with above
+set list
+set listchars=tab:>-,trail:~,extends:>,precedes:<
+set wrap                    " wrap
+
+" Split preferences
+set splitbelow          " Horizontal split below current.
+set splitright          " Vertical split to right of current.
+
+" Scroll offset
+if !&scrolloff
+  set scrolloff=3       " Show next 3 lines while scrolling.
+endif
+if !&sidescrolloff
+  set sidescrolloff=5   " Show next 5 columns while side-scrolling.
+endif
+set nostartofline       " Do not jump to first character with page commands.
+
+" Visual repeat
+vnoremap . :normal .<CR>
+
+" Copy to clipboard when possible
+if has('clipboard')
+  if has('unnamedplus')  " When possible use + register for copy-paste
+    set clipboard=unnamed,unnamedplus
+  else         " On mac and Windows, use * register for copy-paste
+    set clipboard=unnamed
+  endif
+endif
+
+"Alternate
+nnoremap <BS> <C-^>
+
+"Escape
+noremap <C-c> <Esc>
+noremap! <C-c> <Esc>
+noremap <Esc> <C-c>
+noremap! <Esc> <C-c>
 
 " Auto reload files when gain focus
 set autoread
@@ -89,70 +142,53 @@ command! -nargs=+ Silent
 
 au FocusGained,BufEnter * :silent!
 
-set undofile
-set encoding=utf-8
-filetype off                  " required
-
 set formatoptions+=o
 set conceallevel=1
 set termguicolors
 set nojoinspaces
 
-if has('clipboard')
-  if has('unnamedplus')  " When possible use + register for copy-paste
-    set clipboard=unnamed,unnamedplus
-  else         " On mac and Windows, use * register for copy-paste
-    set clipboard=unnamed
+" Relative numbering
+function! NumberToggle()
+  if(&relativenumber == 1)
+    set nornu
+    set number
+  else
+    set rnu
   endif
+endfunc
+call NumberToggle()
+nnoremap <silent> <F4> :call NumberToggle()<cr>
+
+" Remove trailling spaces
+function! Clean()
+    execute(":%s/\s\+$//e")
+endfunc
+
+" ==================== Modules ====================
+
+" Smooth scroll
+noremap <silent> S :call smooth_scroll#up(&scroll, 7, 1)<CR>
+noremap <silent> T :call smooth_scroll#down(&scroll, 7, 1)<CR>
+
+"FZF
+set wildmenu
+nnoremap <expr> <space><space> (len(system('git rev-parse')) ? ':Files' : ':GFiles --exclude-standard --others --cached')."\<CR>"
+nnoremap <silent> <space>b :Buffers<CR>
+nnoremap <silent> <space>/ :execute 'Ag ' . input('Ag/')<CR>
+if executable('ag')
+    set grepprg=ag\ --nogroup\ --column
+    set grepformat=%f:%l:%c%m
 endif
 
-" SPELLCHECK
-set spell spelllang=fr
-map <silent> <F8> :set spell!<CR>
-"inoremap <C-l> <c-g>u<Esc>[s1z=`]a<c-g>u
+nnoremap <silent> qq :bd<CR>
+nmap <silent> T <PageDown>
+nmap <silent> S <PageUP>
+nmap <silent> C :wincmd h<CR>
+nmap <silent> R :wincmd l<CR>
 
-" BACKUP
-set nobackup                " no backup : everything is on git/svn
-set nowb
-set noswapfile              " I said everything was on git !
+nmap gq :bp <BAR> bd #<CR>
 
-" ENCODING
-set encoding=utf-8
-set fileencoding=utf-8
-
-" SEARCH and/or REPLACE
-set ignorecase              " caseless search
-set smartcase               " except when using capitals
-set showmatch               " show matching brackets
-set incsearch               " instant search
-set hlsearch                " highlight the search
-set wrapscan                " wrap search
-set gdefault                " assume /g flag on :s/
-nnoremap <silent> <F3> :noh<CR>
-
-set splitbelow          " Horizontal split below current.
-set splitright          " Vertical split to right of current.
-
-if !&scrolloff
-  set scrolloff=3       " Show next 3 lines while scrolling.
-endif
-if !&sidescrolloff
-  set sidescrolloff=5   " Show next 5 columns while side-scrolling.
-endif
-set nostartofline       " Do not jump to first character with page commands.
-
-"IDENT
-set autoindent            " Auto-ident
-set smartindent           " Smart ident
-set smarttab              " Reset autoindent after a blank line
-set expandtab             " tabs are spaces
-set tabstop=4             " how many spaces on tab
-set softtabstop=4         " one tab = 4 spaces
-set shiftwidth=4          " reduntant with above
-set list
-set listchars=tab:>-,trail:~,extends:>,precedes:<
-
-" ======================== Coc Config ========================
+"COC
 set hidden
 set nobackup
 set nowritebackup
@@ -170,48 +206,17 @@ function! s:check_back_space() abort
   let col = col('.') - 1
   return !col || getline('.')[col - 1]  =~# '\s'
 endfunction
-" ========================
 
-" Relative numbering
-
-function! NumberToggle()
-  if(&relativenumber == 1)
-    set nornu
-    set number
-  else
-    set rnu
-  endif
-endfunc
-
-call NumberToggle()
-
-" Toggle between normal and relative numbering.
-nnoremap <silent> <F4> :call NumberToggle()<cr>
-
-" Allow using the repeat operator with a visual selection (!)
-" http://stackoverflow.com/a/8064607/127816
-vnoremap . :normal .<CR>
-
-colorscheme solarized
-hi! Normal ctermbg=NONE guibg=NONE
-hi clear LineNR
-
-"SYNTAX/LAYOUT
-filetype plugin indent on   " automatic recognition of filetype
-set wrap                    " wrap
-
-set undodir=~/.config/nvim/undodir
-
-autocmd FileType java setlocal omnifunc=javacomplete#Complete
-nmap <F5> <Plug>(JavaComplete-Imports-Add)
-nmap <F6> <Plug>(JavaComplete-Imports-AddMissing)
-nmap <F7> <Plug>(JavaComplete-Imports-RemoveUnused)
-
-" Remap keys for gotos
 nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
+
+"VIM-AIRLINE
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#show_buffers = 0
+let g:airline#extensions#tabline#fnamemod = ':t'
+let g:airline_theme = "hybrid"
 
 "NERDTREE
 noremap <silent> <C-E> :NERDTreeToggle<CR>
@@ -240,22 +245,3 @@ let g:UltiSnipsSnippetsDir = "~/.config/nvim/snippets"
 let g:UltiSnipsExpandTrigger = '<tab>'
 let g:UltiSnipsJumpForwardTrigger = '<tab>'
 let g:UltiSnipsJumpBackwardTrigger = '<s-tab>'
-
-au BufRead,BufNewFile *.nginx set ft=nginx
-au BufRead,BufNewFile */etc/nginx/* set ft=nginx
-au BufRead,BufNewFile */usr/local/nginx/conf/* set ft=nginx
-au BufRead,BufNewFile nginx.conf set ft=nginx
-
-"Remove trailling spaces
-function! Clean()
-    execute(":%s/\s\+$//e")
-endfunc
-
-noremap <silent> S :call smooth_scroll#up(&scroll, 7, 1)<CR>
-noremap <silent> T :call smooth_scroll#down(&scroll, 7, 1)<CR>
-
-" Status line
-set statusline=%{get(g:,'coc_git_status','')}
-set statusline+=\ \ \|\ \ %t
-
-set laststatus=2
