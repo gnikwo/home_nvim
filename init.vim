@@ -6,6 +6,7 @@
 call plug#begin()
 
 Plug 'scrooloose/nerdtree'
+Plug 'preservim/tagbar'
 Plug 'airblade/vim-gitgutter'
 Plug 'simnalamburt/vim-mundo'
 
@@ -24,8 +25,10 @@ Plug 'tpope/vim-repeat'
 Plug 'godlygeek/tabular'
 Plug 'tpope/vim-surround'
 Plug 'Raimondi/delimitMate'
+
 Plug 'tmhedberg/SimpylFold'
 Plug 'Konfekt/FastFold'
+Plug 'zhimsel/vim-stay'
 
 Plug 'terryma/vim-smooth-scroll'
 
@@ -123,10 +126,10 @@ if has('clipboard')
   endif
 endif
 
-"Alternate
+" Alternate
 nnoremap <BS> <C-^>
 
-"Escape
+" Escape
 noremap <C-c> <Esc>
 noremap! <C-c> <Esc>
 noremap <Esc> <C-c>
@@ -164,13 +167,40 @@ function! Clean()
     execute(":%s/\s\+$//e")
 endfunc
 
+" Folding
+set foldlevel=99
+nnoremap <silent> <Tab> @=(foldlevel('.')?'za':"\<Tab>")<CR>
+vnoremap <Tab> zf
+function MyFoldText()
+  let nucolwidth = &fdc + &number*&numberwidth
+  let winwd = winwidth(0) - nucolwidth - 5
+  let foldlinecount = foldclosedend(v:foldstart) - foldclosed(v:foldstart) + 1
+  let prefix = " _______>>> "
+  let fdnfo = prefix . string(v:foldlevel) . "," . string(foldlinecount)
+  let line =  strpart(getline(v:foldstart), 0 , winwd - len(fdnfo))
+  let fillcharcount = winwd - len(line) - len(fdnfo)
+  return line . repeat(" ",fillcharcount) . fdnfo
+endfunction
+set foldtext=MyFoldText()
+
 " ==================== Modules ====================
+" Vim-stay
+set viewoptions=cursor,folds,slash,unix
 
 " Smooth scroll
 noremap <silent> S :call smooth_scroll#up(&scroll, 7, 1)<CR>
 noremap <silent> T :call smooth_scroll#down(&scroll, 7, 1)<CR>
 
-"FZF
+" Tagbar
+nmap <F9> :TagbarToggle<CR>
+let g:tagbar_map_togglesort = ''
+let g:tagbar_map_toggleautoclose = ''
+let g:tagbar_map_togglepause = ''
+let g:tagbar_map_togglefold = ''
+let g:tagbar_map_jump = 'o'
+let g:tagbar_map_preview = 'O'
+
+" FZF
 set wildmenu
 nnoremap <expr> <space><space> (len(system('git rev-parse')) ? ':Files' : ':GFiles --exclude-standard --others --cached')."\<CR>"
 nnoremap <silent> <space>b :Buffers<CR>
@@ -188,7 +218,7 @@ nmap <silent> R :wincmd l<CR>
 
 nmap gq :bp <BAR> bd #<CR>
 
-"COC
+" COC
 set hidden
 set nobackup
 set nowritebackup
@@ -212,13 +242,13 @@ nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
 
-"VIM-AIRLINE
+" VIM-AIRLINE
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#show_buffers = 0
 let g:airline#extensions#tabline#fnamemod = ':t'
 let g:airline_theme = "hybrid"
 
-"NERDTREE
+" NERDTREE
 noremap <silent> <C-E> :NERDTreeToggle<CR>
 let NERDTreeQuitOnOpen=1
 let NERDTreeShowHidden=1
@@ -229,18 +259,14 @@ let NERDTreeMapOpenVSplit="<C-s>"
 let NERDTreeMapRefresh="<C-r>"
 let NERDTreeMapRefreshRoot="<C-R>"
 
-"FOLDING
-set foldmethod=indent
-set foldlevel=99
-
-"VIMTEX
+" VIMTEX
 let g:tex_flavor='latex'
 let g:vimtex_view_method='zathura'
 let g:vimtex_quickfix_mode=0
 set conceallevel=1
 let g:tex_conceal='abdmg'
 
-"ULTISNIPS
+" ULTISNIPS
 let g:UltiSnipsSnippetsDir = "~/.config/nvim/snippets"
 let g:UltiSnipsExpandTrigger = '<tab>'
 let g:UltiSnipsJumpForwardTrigger = '<tab>'
