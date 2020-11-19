@@ -130,10 +130,8 @@ endif
 nnoremap <BS> <C-^>
 
 " Escape
-noremap <C-c> <Esc>
-noremap! <C-c> <Esc>
-noremap <Esc> <C-c>
-noremap! <Esc> <C-c>
+inoremap <C-c> <Esc>
+inoremap <Esc> <C-c>
 
 " Auto reload files when gain focus
 set autoread
